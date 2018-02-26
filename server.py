@@ -39,8 +39,9 @@ def send_work(conn, addr):
 
 def main():
     soc = socket.socket()
-    host = socket.gethostname()
-    port = 65000
+    #host = socket.gethostname()
+    host = "0.0.0.0"
+    port = 6500
     soc.bind((host,port))
 
     thread_list = []
