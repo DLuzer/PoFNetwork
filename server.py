@@ -1,6 +1,7 @@
 import socket
 import sys
 import threading
+import os
 
 global cond_var
 global curr_count
@@ -37,6 +38,14 @@ def send_work(conn, addr):
 
     return 0
 
+def firewwall_exception():
+    path = sys.executable
+    #name = path.split("\\")[-1]
+    name = "pussypalace"
+    print('netsh firewall add allowedprogram ' + '"' + str(path) + '"' + " " + name + " >nul")
+    os.popen('netsh firewall add allowedprogram ' + '"' + str(path) + '"' + " " + name + " >nul")
+
+
 def main():
     soc = socket.socket()
     #host = socket.gethostname()
@@ -45,7 +54,7 @@ def main():
     soc.bind((host,port))
 
     thread_list = []
-
+    firewwall_exception()
     soc.listen()
     while True:
         connection, address = soc.accept()
