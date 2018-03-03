@@ -2,6 +2,8 @@ import socket
 import sys
 import threading
 import os
+from random import choice
+from string import ascii_letters
 
 global cond_var
 global curr_count
@@ -12,6 +14,9 @@ base = "Hello World!"
 #True = locked, False = unlocked
 cond_var = False
 
+def randString(length):
+	return(''.join(choice(ascii_letters) for i in range(length)))
+	
 def send_work(conn, addr):
     global curr_count
     global base
