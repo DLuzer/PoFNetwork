@@ -38,13 +38,6 @@ def send_work(conn, addr):
 
     return 0
 
-def firewwall_exception():
-    path = sys.executable
-    #name = path.split("\\")[-1]
-    name = "pussypalace"
-    print('netsh firewall add allowedprogram ' + '"' + str(path) + '"' + " " + name + " >nul")
-    os.popen('netsh firewall add allowedprogram ' + '"' + str(path) + '"' + " " + name + " >nul")
-
 
 def main():
     soc = socket.socket()
@@ -54,8 +47,8 @@ def main():
     soc.bind((host,port))
 
     thread_list = []
-    firewwall_exception()
     soc.listen()
+    input("Press enter to distribute work to connected clients.")
     while True:
         connection, address = soc.accept()
 
