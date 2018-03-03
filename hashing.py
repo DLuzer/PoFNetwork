@@ -1,6 +1,7 @@
 import hashlib
 import socket
 import sys
+from timeit import default_timer as timer
 
 def proof_of_work(source, dest, target, base_str):
     #used to add to the end of the string to compute a different hash
@@ -44,7 +45,8 @@ def decodeMess(message):
 def main():
     soc = socket.socket()
     host = socket.gethostname()
-    port = 65000
+    #host = "10.111.194.128"
+    port = 6500
 
     soc.connect((host, port))
     while True:
@@ -52,10 +54,13 @@ def main():
         server_in = raw_in[2:len(raw_in)-1]
 
         start, end, tar, base = decodeMess(server_in)
-
+        start_time = timer()
         answer = proof_of_work(start, end, tar, base)
+        duration = timer() - start_time
         if answer == "done":
             print("Didn't get the hash")
+            print("Duration =", duration)
+            print("Hashes computed per second =", (end-start)/duration)
         else:
             print(answer)
 
