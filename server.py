@@ -1,3 +1,11 @@
+"""
+CIS 433: Computer Network and Security
+Project: Cryptocurrency Mining Models
+Authors: Danny Lu, Syd Lynch, Charlie Plachno
+
+Description: The file contains code for the server to distribute work over a network
+of machines.
+"""
 import socket
 import sys
 import threading
@@ -20,6 +28,9 @@ connections = {}
 def randString(length):
 	return(''.join(choice(ascii_letters) for i in range(length)))
 
+#Send a range of work to clients 
+#Example of range: "1-1000"(Add each number in this range at the end of the base string
+#to compute a new hash, keep doing this until the desired hash is found.)
 def send_work(conn, addr):
     global curr_count
     global base
@@ -32,6 +43,7 @@ def send_work(conn, addr):
         if (cond_var == False):
             cond_var = True
             message = str(curr_count + 1) + '-' + str(curr_count + 1000000) + '-' + '6' + '-' + base
+            #Statically allocate a range to clients to compute
             curr_count += 1000000
             print(curr_count)
 
@@ -39,6 +51,8 @@ def send_work(conn, addr):
             conn.send(message.encode('utf-8'))
             cond_var = False
 
+            #Wait for the client to compute the work and respond with 
+            #the findings of the specified range
             client_in = str(conn.recv(1024))
             print("received:", client_in, "from:", addr)
 
@@ -51,7 +65,8 @@ def send_work(conn, addr):
 
     return 0
 
-
+#Wait for connections, for each new client the server creates a thread 
+#to communicate with the client.
 def main():
     global connections
 

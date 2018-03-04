@@ -1,8 +1,36 @@
+"""
+CIS 433: Computer Network and Security
+Project: Cryptocurrency Mining Models
+Authors: Danny Lu, Syd Lynch, Charlie Plachno
+
+Description: This file contains the code for clients to connect to a server. The server
+sends a range (Example: 1-1000) for the client to add to the end of a base string. 
+
+    Example: 
+        Let our base string be "Hello World" and our range be 1-1000
+    
+    Compute: 
+        Hash -> "Hello World1"
+        Hash -> "Hello World2"
+        ...
+        Hash -> "Hello World1000"
+    
+    Check the hash if there is a number of zeros at the beginning of the hash that equals 
+    the number of the specified target. 
+
+    Example:
+        Let our target be 5
+
+        Correct Hash -> "000003j60sh38ylemis0383743j3i38"
+        Incorrect Hash -> "2j28dk09es7f9fj0gg9f8df0f0g9g0f"
+
+"""
 import hashlib
 import socket
 import sys
 from timeit import default_timer as timer
 
+#Used to compute hashes and calls check_hash to see if the hash is the one we want
 def proof_of_work(source, dest, target, base_str):
     #used to add to the end of the string to compute a different hash
     counter = source
@@ -21,6 +49,7 @@ def proof_of_work(source, dest, target, base_str):
     print("found:" + str(counter))
     return counter
 
+#Check if there are zeros equal to the number of the target at the beginning of the hash
 def check_hash(hashcode, target):
     zeros = 0
     check_index = 0
@@ -34,6 +63,8 @@ def check_hash(hashcode, target):
             return False
     return False
 
+#When receiving work from the server the message is in a specific format
+#Message Example: "100-1000-6-Hello World"
 def decodeMess(message):
     split_mess = message.split('-')
     start_hash = int(split_mess[0])
@@ -43,10 +74,12 @@ def decodeMess(message):
 
     return start_hash, end_hash, target, base_str
 
+#Connects to host, receive work from ther server, send back 'done' if the hash wasn't 
+#found within the range, send the appropriate answer if appropriate hash was found
 def main():
     soc = socket.socket()
-    host = socket.gethostname()
-    #host = "10.111.194.128"
+    #host = socket.gethostname()
+    host = "10.111.195.207"
     port = 6500
 
     soc.connect((host, port))
