@@ -18,7 +18,8 @@ def proof_of_work(source, dest, target, base_str):
         #print(work)
 
     #prints the counter and how many iterations to get to the desired hash
-    return ("found:" + str(counter))
+    print("found:" + str(counter))
+    return counter
 
 def check_hash(hashcode, target):
     zeros = 0
@@ -61,8 +62,11 @@ def main():
             print("Didn't get the hash")
             print("Duration =", duration)
             print("Hashes computed per second =", (end-start)/duration)
+            hash_per_second = (end-start)/duration
         else:
+            hash_per_second = (answer - start)/duration
             print(answer)
+        answer += " " + str(hash_per_second)
 
         answer = answer.encode('utf-8')
         soc.sendto(answer,(host,port))
