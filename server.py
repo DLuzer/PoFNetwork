@@ -71,7 +71,7 @@ def send_work(conn, addr):
 
             if client_in[2:6] != "done":
                 found = client_in.split(" ")[0]
-                print(">>>" + found
+                print(">>>" + found)
                 return found
             else:
                 hps = client_in.split(" ")[1]
