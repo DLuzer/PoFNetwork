@@ -5,6 +5,19 @@ Authors: Danny Lu, Syd Lynch, Charlie Plachno
 
 Description: The file contains code for the server to distribute work over a network
 of machines.
+
+    Example: 
+        Let our server only have one client connected
+
+    Server:
+        Sends "0-1000-3-Hello World" to client and waits for a response
+    
+    Client: 
+        Receives "0-1000-3-Hello World", passes the message into decodeMess function.
+        The values for the range, target and base string are extracted and are passed 
+        into proof_of_work to compute the hashes with the specified range. 
+        Once the client is done, they will notify the Server if the wanted hash was 
+        found or not. If not, the server will allocate more work to compute.
 """
 import socket
 import sys
@@ -12,6 +25,7 @@ import threading
 import os
 from random import choice
 from string import ascii_letters
+from timeit import default_timer as timer
 
 global cond_var
 global curr_count
@@ -37,7 +51,6 @@ def send_work(conn, addr):
     global cond_var
     global connections
 
-
     while True:
         print(connections)
         if (cond_var == False):
@@ -57,8 +70,9 @@ def send_work(conn, addr):
             print("received:", client_in, "from:", addr)
 
             if client_in[2:6] != "done":
-                print(">>>" + client_in.split(" ")[0])
-                break
+                found = client_in.split(" ")[0]
+                print(">>>" + found
+                return found
             else:
                 hps = client_in.split(" ")[1]
                 connections[addr[0]] = hps
@@ -78,6 +92,7 @@ def main():
     thread_list = []
     soc.listen()
     input("Press enter to distribute work to all connected clients.")
+    start_timer = timer()
     while True:
         connection, address = soc.accept()
 
@@ -86,5 +101,7 @@ def main():
         thread = threading.Thread(target = send_work, args = (connection, address))
         thread_list.append(thread)
         thread.start()
+    duration = timer() - start_timer
+    print(duration)
 
 main()

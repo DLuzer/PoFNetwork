@@ -4,7 +4,21 @@ Project: Cryptocurrency Mining Models
 Authors: Danny Lu, Syd Lynch, Charlie Plachno
 
 Description: The file contains code for the server to distribute work over a network
-of machines.
+of machines. The server dynamically allocates work to clients based off of it's hashes
+per second. At first all, clients get the same work. Once the client responds to the server
+letting it know how fast it can compute hashes.
+
+	Example: 
+		Let there be two clients, C1 with 100,000 hps, and C2 with 400,000 hps(hps = hashes per second).
+		Let initial_work = 10,000
+	
+	Server:
+		Takes the client's hps and computes (hps/initial_work)*initial_work
+		
+		C1 = 100,000/10,000 = 10*10,000 = 100,000
+		C2 = 400,000/10,000 = 40*10,000 = 400,000
+
+		Thus our server tailors every work range to meet the needs of every machine.
 """
 import socket
 import sys
@@ -48,7 +62,9 @@ def send_work(conn, addr):
 		if (cond_var == False):
 			cond_var = True
 			message = str(curr_count + 1) + '-' + str(curr_count + math.floor((hps/initial_work)*initial_work)) + '-' + '6' + '-' + base
-			#Statically allocate a range to clients to compute
+			#Dymanically allocate a range to clients to compute hashes.
+			#Take the client's hashes per second and start sending work 
+			#to accomidate for slower/faster machines.
 			curr_count += math.floor((hps/initial_work)*initial_work)
 			print(curr_count)
 
