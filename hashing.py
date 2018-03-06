@@ -4,19 +4,19 @@ Project: Cryptocurrency Mining Models
 Authors: Danny Lu, Syd Lynch, Charlie Plachno
 
 Description: This file contains the code for clients to connect to a server. The server
-sends a range (Example: 1-1000) for the client to add to the end of a base string. 
+sends a range (Example: 1-1000) for the client to add to the end of a base string.
 
-    Example: 
+    Example:
         Let our base string be "Hello World" and our range be 1-1000
-    
-    Compute: 
+
+    Compute:
         Hash -> "Hello World1"
         Hash -> "Hello World2"
         ...
         Hash -> "Hello World1000"
-    
-    Check the hash if there is a number of zeros at the beginning of the hash that equals 
-    the number of the specified target. 
+
+    Check the hash if there is a number of zeros at the beginning of the hash that equals
+    the number of the specified target.
 
     Example:
         Let our target be 5
@@ -28,6 +28,7 @@ sends a range (Example: 1-1000) for the client to add to the end of a base strin
 import hashlib
 import socket
 import sys
+import threading
 from timeit import default_timer as timer
 
 #Used to compute hashes and calls check_hash to see if the hash is the one we want
@@ -74,18 +75,29 @@ def decodeMess(message):
 
     return start_hash, end_hash, target, base_str
 
-#Connects to host, receive work from ther server, send back 'done' if the hash wasn't 
+def kill_signal(message):
+    raw_in = str(soc.recv(1024))
+    server_in = raw_in[2:len(raw_in)-1]
+
+    if server_in == "kill":
+        return True
+    return False
+
+#Connects to host, receive work from ther server, send back 'done' if the hash wasn't
 #found within the range, send the appropriate answer if appropriate hash was found
 def main():
     soc = socket.socket()
-    #host = socket.gethostname()
-    host = "10.111.195.207"
+    host = socket.gethostname()
+    #host = "10.111.195.207"
     port = 6500
 
     soc.connect((host, port))
     while True:
         raw_in = str(soc.recv(1024))
         server_in = raw_in[2:len(raw_in)-1]
+
+        if server_in == "kill":
+            break
 
         start, end, tar, base = decodeMess(server_in)
         start_time = timer()
