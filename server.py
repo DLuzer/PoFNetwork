@@ -6,17 +6,17 @@ Authors: Danny Lu, Syd Lynch, Charlie Plachno
 Description: The file contains code for the server to distribute work over a network
 of machines.
 
-    Example: 
+    Example:
         Let our server only have one client connected
 
     Server:
         Sends "0-1000-3-Hello World" to client and waits for a response
-    
-    Client: 
+
+    Client:
         Receives "0-1000-3-Hello World", passes the message into decodeMess function.
-        The values for the range, target and base string are extracted and are passed 
-        into proof_of_work to compute the hashes with the specified range. 
-        Once the client is done, they will notify the Server if the wanted hash was 
+        The values for the range, target and base string are extracted and are passed
+        into proof_of_work to compute the hashes with the specified range.
+        Once the client is done, they will notify the Server if the wanted hash was
         found or not. If not, the server will allocate more work to compute.
 """
 import socket
@@ -42,7 +42,7 @@ connections = {}
 def randString(length):
 	return(''.join(choice(ascii_letters) for i in range(length)))
 
-#Send a range of work to clients 
+#Send a range of work to clients
 #Example of range: "1-1000"(Add each number in this range at the end of the base string
 #to compute a new hash, keep doing this until the desired hash is found.)
 def send_work(conn, addr):
@@ -64,7 +64,7 @@ def send_work(conn, addr):
             conn.send(message.encode('utf-8'))
             cond_var = False
 
-            #Wait for the client to compute the work and respond with 
+            #Wait for the client to compute the work and respond with
             #the findings of the specified range
             client_in = str(conn.recv(1024))
             print("received:", client_in, "from:", addr)
@@ -79,10 +79,11 @@ def send_work(conn, addr):
 
     return 0
 
-#Wait for connections, for each new client the server creates a thread 
+#Wait for connections, for each new client the server creates a thread
 #to communicate with the client.
 def main():
     global connections
+    global counter
 
     soc = socket.socket()
     host = "0.0.0.0"
@@ -93,6 +94,7 @@ def main():
     soc.listen()
     input("Press enter to distribute work to all connected clients.")
     start_timer = timer()
+    duration = 0
     while True:
         connection, address = soc.accept()
 
@@ -101,7 +103,12 @@ def main():
         thread = threading.Thread(target = send_work, args = (connection, address))
         thread_list.append(thread)
         thread.start()
-    duration = timer() - start_timer
+        duration = timer() - start_timer
+        print(duration)
+        if duration > 60:
+            print(counter)
+            break
+
     print(duration)
 
 main()
