@@ -75,30 +75,18 @@ def decodeMess(message):
 
     return start_hash, end_hash, target, base_str
 
-def kill_signal(message):
-    raw_in = str(soc.recv(1024))
-    server_in = raw_in[2:len(raw_in)-1]
-
-    if server_in == "kill":
-        return True
-    return False
-
 #Connects to host, receive work from ther server, send back 'done' if the hash wasn't
 #found within the range, send the appropriate answer if appropriate hash was found
 def main():
     soc = socket.socket()
-    host = socket.gethostname()
-    #host = "10.111.195.207"
+    #host = socket.gethostname()
+    host = "10.111.223.87"
     port = 6500
 
     soc.connect((host, port))
     while True:
         raw_in = str(soc.recv(1024))
         server_in = raw_in[2:len(raw_in)-1]
-
-        if server_in == "kill":
-            break
-
         start, end, tar, base = decodeMess(server_in)
         start_time = timer()
         answer = proof_of_work(start, end, tar, base)
@@ -111,7 +99,7 @@ def main():
         else:
             hash_per_second = (answer - start)/duration
             print(answer)
-        answer += " " + str(hash_per_second)
+        answer = str(answer) + " " + str(hash_per_second)
 
         answer = answer.encode('utf-8')
         soc.sendto(answer,(host,port))
