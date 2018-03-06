@@ -51,11 +51,18 @@ def send_work(conn, addr):
     global cond_var
     global connections
 
+    start = timer()
+    duration = 0
     while True:
         print(connections)
+        duration = timer() - start
+        print(duration)
+        if duration > 60:
+            print(curr_count)
+            break
         if (cond_var == False):
             cond_var = True
-            message = str(curr_count + 1) + '-' + str(curr_count + 1000000) + '-' + '6' + '-' + base
+            message = str(curr_count + 1) + '-' + str(curr_count + 1000000) + '-' + '10' + '-' + base
             #Statically allocate a range to clients to compute
             curr_count += 1000000
             print(curr_count)
@@ -93,8 +100,7 @@ def main():
     thread_list = []
     soc.listen()
     input("Press enter to distribute work to all connected clients.")
-    start_timer = timer()
-    duration = 0
+
     while True:
         connection, address = soc.accept()
 
@@ -103,12 +109,7 @@ def main():
         thread = threading.Thread(target = send_work, args = (connection, address))
         thread_list.append(thread)
         thread.start()
-        duration = timer() - start_timer
-        print(duration)
-        if duration > 60:
-            print(counter)
-            break
 
-    print(duration)
+
 
 main()

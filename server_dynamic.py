@@ -8,13 +8,13 @@ of machines. The server dynamically allocates work to clients based off of it's 
 per second. At first all, clients get the same work. Once the client responds to the server
 letting it know how fast it can compute hashes.
 
-	Example: 
+	Example:
 		Let there be two clients, C1 with 100,000 hps, and C2 with 400,000 hps(hps = hashes per second).
 		Let initial_work = 10,000
-	
+
 	Server:
 		Takes the client's hps and computes (hps/initial_work)*initial_work
-		
+
 		C1 = 100,000/10,000 = 10*10,000 = 100,000
 		C2 = 400,000/10,000 = 40*10,000 = 400,000
 
@@ -27,6 +27,8 @@ import os
 import math
 from random import choice
 from string import ascii_letters
+from timeit import default_timer as timer
+
 
 global cond_var
 global curr_count
@@ -54,16 +56,22 @@ def send_work(conn, addr):
 	global connections
 	global initial_work
 
-	initial_work = 100000
+	initial_work = 1000000
 	hps = initial_work
-
+	start = timer()
+	duration = 0
 	while True:
 		print(connections)
+		duration = timer() - start
+		print(duration)
+		if duration > 60:
+			print(curr_count)
+			break
 		if (cond_var == False):
 			cond_var = True
-			message = str(curr_count + 1) + '-' + str(curr_count + math.floor((hps/initial_work)*initial_work)) + '-' + '6' + '-' + base
+			message = str(curr_count + 1) + '-' + str(curr_count + math.floor((hps/initial_work)*initial_work)) + '-' + '10' + '-' + base
 			#Dymanically allocate a range to clients to compute hashes.
-			#Take the client's hashes per second and start sending work 
+			#Take the client's hashes per second and start sending work
 			#to accomidate for slower/faster machines.
 			curr_count += math.floor((hps/initial_work)*initial_work)
 			print(curr_count)
