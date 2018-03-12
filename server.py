@@ -66,7 +66,7 @@ def send_work(conn, addr):
             curr_count += work_range
             print(curr_count)
 
-            print("sent: ", message, " to: ", conn)
+            print("sent:", message, "to:", addr)
             conn.send(message.encode('utf-8'))
             cond_var = False
 
@@ -101,9 +101,9 @@ def main():
 
     thread_list = []
     soc.listen()
-    base = input("Enter a base stirng: ")
-    work_range = input("Enter a work range: ")
-    target = input("Enter a target (number of zeros in the beginning of hash): ")
+    base = str(input("Enter a base stirng: "))
+    work_range = int(input("Enter a work range: "))
+    target = str(input("Enter a target (number of zeros in the beginning of hash): "))
     input("Press enter to distribute work to all connected clients.")
 
     while True:
