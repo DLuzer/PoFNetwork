@@ -93,8 +93,8 @@ def main():
         duration = timer() - start_time
         if answer == "done":
             print("Didn't get the hash")
-            print("Duration =", duration)
-            print("Hashes computed per second =", (end-start)/duration)
+            print("Duration = ", duration)
+            print("Hashes per second =", (end-start)/duration)
             hash_per_second = (end-start)/duration
         else:
             hash_per_second = (answer - start)/duration

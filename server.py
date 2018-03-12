@@ -31,9 +31,10 @@ global cond_var
 global curr_count
 global base
 global connections
+global work_range
+global target
 
 curr_count = -1
-base = "Hello World!"
 #True = locked, False = unlocked
 cond_var = False
 connections = {}
@@ -50,24 +51,22 @@ def send_work(conn, addr):
     global base
     global cond_var
     global connections
+    global work_range
+    global target
 
     start = timer()
     duration = 0
     while True:
-        print(connections)
         duration = timer() - start
         print(duration)
-        if duration > 60:
-            print(curr_count)
-            break
         if (cond_var == False):
             cond_var = True
-            message = str(curr_count + 1) + '-' + str(curr_count + 1000000) + '-' + '10' + '-' + base
+            message = str(curr_count + 1) + '-' + str(curr_count + work_range) + '-' + target + '-' + base
             #Statically allocate a range to clients to compute
-            curr_count += 1000000
+            curr_count += work_range
             print(curr_count)
 
-            print("sent:", message)
+            print("sent: ", message, " to: ", conn)
             conn.send(message.encode('utf-8'))
             cond_var = False
 
@@ -78,7 +77,7 @@ def send_work(conn, addr):
 
             if client_in[2:6] != "done":
                 found = client_in.split(" ")[0]
-                print(">>>" + found)
+                print("Desired Hash Found: " + found)
                 return found
             else:
                 hps = client_in.split(" ")[1]
@@ -91,6 +90,9 @@ def send_work(conn, addr):
 def main():
     global connections
     global counter
+    global base
+    global work_range
+    global target
 
     soc = socket.socket()
     host = "0.0.0.0"
@@ -99,6 +101,9 @@ def main():
 
     thread_list = []
     soc.listen()
+    base = input("Enter a base stirng: ")
+    work_range = input("Enter a work range: ")
+    target = input("Enter a target (number of zeros in the beginning of hash): ")
     input("Press enter to distribute work to all connected clients.")
 
     while True:
@@ -109,7 +114,5 @@ def main():
         thread = threading.Thread(target = send_work, args = (connection, address))
         thread_list.append(thread)
         thread.start()
-
-
 
 main()
