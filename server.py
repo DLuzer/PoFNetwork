@@ -58,6 +58,10 @@ def send_work(conn, addr):
     duration = 0
     while True:
         duration = timer() - start
+        if duration >= 60:
+            print(curr_count)
+            print(duration)
+            break;
         print(duration)
         if (cond_var == False):
             cond_var = True
