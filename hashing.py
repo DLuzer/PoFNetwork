@@ -80,7 +80,7 @@ def decodeMess(message):
 def main():
     soc = socket.socket()
     #host = socket.gethostname()
-    host = "10.111.223.87"
+    host = input("Enter the server's public IP Address: ")
     port = 6500
 
     soc.connect((host, port))

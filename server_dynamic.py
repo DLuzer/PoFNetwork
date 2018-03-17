@@ -35,9 +35,9 @@ global curr_count
 global base
 global connections
 global initial_work
+global target
 
 curr_count = -1
-base = "Hello World!"
 #True = locked, False = unlocked
 cond_var = False
 connections = {}
@@ -55,21 +55,17 @@ def send_work(conn, addr):
 	global cond_var
 	global connections
 	global initial_work
+	global target
 
 	initial_work = 1000000
 	hps = initial_work
 	start = timer()
 	duration = 0
 	while True:
-		print(connections)
 		duration = timer() - start
-		print(duration)
-		if duration > 60:
-			print(curr_count)
-			break
 		if (cond_var == False):
 			cond_var = True
-			message = str(curr_count + 1) + '-' + str(curr_count + math.floor((hps/initial_work)*initial_work)) + '-' + '10' + '-' + base
+			message = str(curr_count + 1) + '-' + str(curr_count + math.floor((hps/initial_work)*initial_work)) + '-' + target + '-' + base
 			#Dymanically allocate a range to clients to compute hashes.
 			#Take the client's hashes per second and start sending work
 			#to accomidate for slower/faster machines.
@@ -98,6 +94,8 @@ def send_work(conn, addr):
 #to communicate with the client.
 def main():
 	global connections
+	global target
+	global base
 
 	soc = socket.socket()
 	host = "0.0.0.0"
@@ -106,6 +104,8 @@ def main():
 
 	thread_list = []
 	soc.listen()
+	base = str(input("Enter a base string: "))
+	target = str(input("Enter a target(number of zeros at the beginning of the hash): "))
 	input("Press enter to distribute work to all connected clients.")
 	while True:
 		connection, address = soc.accept()
