@@ -39,10 +39,6 @@ curr_count = -1
 cond_var = False
 connections = {}
 
-
-def randString(length):
-	return(''.join(choice(ascii_letters) for i in range(length)))
-
 #Send a range of work to clients
 #Example of range: "1-1000"(Add each number in this range at the end of the base string
 #to compute a new hash, keep doing this until the desired hash is found.)
