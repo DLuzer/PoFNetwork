@@ -9,9 +9,9 @@ socketio = SocketIO(app)
 users = {}
 num_of_users = 0
 
-base_string = str(input("Enter base string: "))
-work_range = int(input("Enter work range: "))
-target = str(input("Enter the target number of leading zeros in the hash"))
+base_string = ""
+work_range = 0
+target = ""
 current_count = -1
 
 @app.route('/')
@@ -20,13 +20,16 @@ def index():
 
 @socketio.on("connection")
 def handle_connection(conn):
-    #message = str(current_count + 1) + '-' + str(current_count + work_range) + '-' + target + '-' + base_string
     print("Received: " + conn);
 
 @socketio.on("payload")
 def handle_payload(pl):
+    pl = str(current_count + 1) + '-' + str(current_count + work_range) + '-' + target + '-' + base_string
     print("Payload in: " + pl)
     emit("payload_in", pl, broadcast = True)
 
 if __name__ == "__main__":
+    base_string = str(input("Enter base string: "))
+    work_range = int(input("Enter work range: "))
+    target = str(input("Enter the target number of leading zeros in the hash: "))
     socketio.run(app)
