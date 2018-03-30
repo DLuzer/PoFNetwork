@@ -19,10 +19,12 @@
             //Receive work from server
             socket.on("payload_in", function(pl){
                 //call hashing function/check hash/update count
-                if (isBusy == false){
-                    isBusy == True;
-                    decodeMess(pl);
-                }
+                var decoded = decodeMess(pl);
+                var start = decoded[0];
+                var end = decoded[1];
+                var tar = decoded[2];
+                var base = decoded[3];
+                document.write(start, end, tar, base);
             });
             
             //Click to start calculating proof-of-work
@@ -33,12 +35,21 @@
             //Write decode message function
             function decodeMess(msg){
                 var split_msg = msg.split('-');
-                document.write(split_msg);
+                //document.write(split_msg);
                 var start_hash = parseInt(split_msg[0]);
                 var end_hash = parseInt(split_msg[1]);
                 var target = parseInt(split_msg[2]);
                 var base_str = split_msg[3];
-                return start_hash, end_hash, target, base_str
+                return [start_hash, end_hash, target, base_str];
+            }
+
+            function check_hash(hashcode, target){
+                for (var i = 0; i < hashcode.length; i++){
+                    document.write(hashcode[i]);
+                }
+            }
+
+            function proof_of_work(src, dest, tar, base){
             }
     });
     </script>

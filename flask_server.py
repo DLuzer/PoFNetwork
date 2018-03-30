@@ -2,7 +2,6 @@ from flask import Flask, render_template
 from flask_socketio import SocketIO, send, emit
 
 app = Flask(__name__)
-app.debug = True
 app.config['Secret Key'] = 'dannysecret'
 socketio = SocketIO(app)
 
@@ -20,7 +19,7 @@ def index():
 
 @socketio.on("connection")
 def handle_connection(conn):
-    print("Received: " + conn);
+    print("Received: " + conn)
 
 @socketio.on("payload")
 def handle_payload(pl):
@@ -28,8 +27,10 @@ def handle_payload(pl):
     print("Payload in: " + pl)
     emit("payload_in", pl, broadcast = True)
 
+base_string = str(input("Enter base string: "))
+work_range = int(input("Enter work range: "))
+target = str(input("Enter the target number of leading zeros in the hash: "))
+#7299405145
+
 if __name__ == "__main__":
-    base_string = str(input("Enter base string: "))
-    work_range = int(input("Enter work range: "))
-    target = str(input("Enter the target number of leading zeros in the hash: "))
-    socketio.run(app)
+    socketio.run(app) 
